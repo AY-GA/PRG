@@ -28,21 +28,38 @@ public class SpojovySeznam {
     }
 
     public void vypis() {
+        if (prvniPolozka == null) return;
         var polozka = prvniPolozka;
 
         while (polozka.dalsi != null) {
-            System.out.println(polozka.hodnota);
+            System.out.print(polozka.hodnota + " ");
             polozka = polozka.dalsi;
+        }
+    }
+
+    void removeSudy() {
+        if (prvniPolozka == null) return;
+        while (prvniPolozka.hodnota % 2 == 0) {
+            prvniPolozka = prvniPolozka.dalsi;
+        }
+        var aktualni = prvniPolozka;
+
+        while (aktualni.dalsi != null) {
+            if (aktualni.dalsi.hodnota % 2 == 0) aktualni.dalsi = aktualni.dalsi.dalsi;
+            else aktualni = aktualni.dalsi;
         }
     }
 
     public static void main(String[] args) {
         var s = new SpojovySeznam();
         var start = System.currentTimeMillis();
-        for (int i = 0; i < 100_000; i++) {
+        for (int i = 0; i < 20; i+=2)
             s.addPolozka(i);
-        }
-//        s.vypis();
-        System.out.println(System.currentTimeMillis() - start + " ms");
+
+        s.vypis();
+        System.out.println();
+        s.removeSudy();
+        s.vypis();
+        System.out.println("\n" + (System.currentTimeMillis() - start) + " ms");
     }
 }
