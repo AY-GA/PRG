@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-public static void main() throws IOException {
+void main() throws IOException {
     File file = new File("vstup.txt");
     Scanner sc = new Scanner(file);
 

@@ -18,15 +18,16 @@ public class Databaza {
 
         System.out.println(ppl);
 
-        try(Connection con = DriverManager.getConnection("jdbc: .....", null, null)) {
-            try(Statement st = con.createStatement()) {
-                String sqlCommand = "INSERT INTO clovek(name, surname, year) VALUES ("
-                        + "'" + ppl.get(0).name + "',"
-                        + "'" + ppl.get(0).surname + "',"
-                        + ppl.get(0).year + ")";
-
-                System.out.println(sqlCommand);
-                st.executeUpdate(sqlCommand);
+        try (Connection conn = DriverManager.getConnection("jdbc:postgresql:db3963", "db3963", "programovani")) {
+            try(Statement st = conn.createStatement()) {
+//                String sqlCommand = "INSERT INTO clovek(name, surname, year) VALUES ("
+//                        + "'" + ppl.getFirst().name + "',"
+//                        + "'" + ppl.getFirst().surname + "',"
+//                        + ppl.getFirst().year + ")";
+//
+//                System.out.println(sqlCommand);
+//                st.executeUpdate(sqlCommand);
+                st.execute("CREATE TABLE IF NOT EXISTS clovek");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

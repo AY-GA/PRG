@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class GetCert {
     static final String url = "https://google.eu";
 
-    static void main() throws IOException {
+    public static void main(String[] args) throws IOException {
         URL destinationURL = new URL(url);
         HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
         conn.connect();
