@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class Uloha {
     public static void main(String[] args) throws SQLException {
-        boolean error = false;
         while (true) {
             try (Connection conn = DriverManager.getConnection("jdbc:postgresql:db3963")) {
                 Scanner sc = new Scanner(System.in);
@@ -17,19 +16,12 @@ public class Uloha {
                 String jmenoKnihy = parts.length > 1 ? parts[1] : "";
 
                 int idKnihy = findKniha(conn, jmenoKnihy);
-                if (idKnihy == 0) {
-                    System.out.println("neznamy uzivatel");
-                    error = true;
-                }
-                int idUsera = findUser(conn, prijmeni);
-                if (idUsera == 0) {
-                    System.out.println("neznama kniha");
-                    error = true;
-                }
+                if (idKnihy == 0) continue;
+                int idUzivatele = findUser(conn, prijmeni);
+                if (idUzivatele == 0) continue;
 
-                if (error) continue;
                 try {
-                    borrowBook(conn, idUsera, idKnihy);
+                    borrowBook(conn, idUzivatele, idKnihy);
                 } catch (SQLException e) {
                     System.out.println("chyba");
 //                throw new RuntimeException(e);
@@ -52,7 +44,6 @@ public class Uloha {
         }
     }
 
-
     public static int findKniha(Connection conn, String bookName) throws SQLException {
         String sql = "SELECT id FROM kniha WHERE jmeno = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -70,17 +61,16 @@ public class Uloha {
     public static void borrowBook(Connection conn, int userId, int bookId) throws SQLException {
         assert userId > 0;
         assert bookId > 0;
+        String sql = "INSERT INTO vypujcka (id_u, id_k, vypujceno) VALUES (?, ?, ?)";
 
-        if (isBorrowed(conn, userId, bookId)) {
-            String sql = "INSERT INTO vypujcka (id_u, id_k, vypujceno) VALUES (?, ?, ?)";
+        if (isBorrowed(conn, userId, bookId)) returnBook(conn, userId, bookId);
+        else
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
                 ps.setInt(1, userId);
                 ps.setInt(2, bookId);
                 ps.setDate(3, Date.valueOf(LocalDate.now()));
                 ps.executeUpdate();
             }
-        } else returnBook(conn, userId, bookId);
     }
 
     public static void returnBook(Connection conn, int userId, int bookId) throws SQLException {
@@ -96,14 +86,12 @@ public class Uloha {
         }
     }
 
-
     public static boolean isBorrowed(Connection conn, int userId, int bookId) throws SQLException {
         String sql = "SELECT * FROM vypujcka WHERE id_u = ? AND id_k = ? AND vraceno IS NULL";
-
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, userId);
             ps.setInt(2, bookId);
-
             ResultSet rs = ps.executeQuery();
             return rs.next();
         }

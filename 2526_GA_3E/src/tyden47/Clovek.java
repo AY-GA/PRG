@@ -1,8 +1,5 @@
 package tyden47;
 
-import lombok.Data;
-
-@Data
 public class Clovek {
     final String name;
     final String surname;
