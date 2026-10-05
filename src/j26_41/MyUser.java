@@ -10,7 +10,7 @@ public class MyUser {
     public MyUser(int id, String name, List<String> role) {
         this.id = id;
         this.name = name;
-        this.role = role;
+        this.role = List.copyOf(role);
     }
 
     @Override
